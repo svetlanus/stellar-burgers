@@ -12,6 +12,7 @@
   text-decoration: none;
   background-color: #1c1c21;
   border-radius: 40px;
+  cursor: pointer;
 }
 
 .order_info {
