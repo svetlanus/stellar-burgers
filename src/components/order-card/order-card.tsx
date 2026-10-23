@@ -14,7 +14,7 @@ export const OrderCard = memo(function OrderCard({
 }: OrderCardProps): React.JSX.Element | null {
   const location = useLocation();
 
-  // TODO: Взять переменную из стора
+
   const ingredients: TIngredient[] = useSelector(selectIngredients);
 
   const orderInfo = useMemo(() => {

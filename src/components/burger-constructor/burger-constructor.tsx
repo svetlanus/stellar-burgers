@@ -18,7 +18,7 @@ import { selectUser } from '@services/slices/user-slice';
 import type { TConstructorIngredient, TConstructorState, TOrder } from '@utils-types';
 
 export const BurgerConstructor = (): React.JSX.Element | null => {
-  /**переменные constructorItems, orderRequest и orderModalData из стора */
+
   const constructorItems: TConstructorState = useSelector(selectConstructor);
   const orderRequest = useSelector(selectOrderRequest);
   const orderModalData: TOrder | null = useSelector(selectOrder);
@@ -32,7 +32,7 @@ export const BurgerConstructor = (): React.JSX.Element | null => {
       void navigate('/login');
       return;
     }
-    //офорление заказа
+
     const ids = [
       constructorItems.bun._id,
       ...constructorItems.ingredients.map((item) => item._id),
@@ -50,7 +50,7 @@ export const BurgerConstructor = (): React.JSX.Element | null => {
   };
 
   const closeOrderModal = (): void => {
-    // Закрыть модальное окно и сбросить заказ
+
     dispatch(clearOrder());
   };
 

@@ -36,7 +36,7 @@ export const ForgotPassword = (): React.JSX.Element => {
 
   return (
     <ForgotPasswordUI
-      errorText={error?.message}
+      errorText={error ?? ''}
       email={email}
       setEmail={setEmail}
       handleSubmit={handleSubmit}

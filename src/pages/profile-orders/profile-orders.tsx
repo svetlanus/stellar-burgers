@@ -12,7 +12,7 @@ export const ProfileOrders = (): React.JSX.Element => {
    useEffect(() => {
     void dispatch(getOrders());
   }, [dispatch]);
-  /** TODO: взять переменную из стора */
+
   const orders: TOrder[] = useSelector(selectOrders);
 
   return <ProfileOrdersUI orders={orders} />;

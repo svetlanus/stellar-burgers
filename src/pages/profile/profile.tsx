@@ -8,7 +8,7 @@ import type { TRegisterData } from '@utils/burger-api';
 import { Preloader } from '@ui';
 
 export const Profile = (): React.JSX.Element => {
-  /** TODO: Взять переменную из стора */
+
  const user = useSelector(selectUser);
  const dispatch = useDispatch();
 

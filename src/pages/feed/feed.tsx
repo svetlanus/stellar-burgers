@@ -8,10 +8,9 @@ import {
   selectFeedOrders,
   selectFeedLoading,
 } from '@services/slices/feed-slice';
-import type { AppDispatch } from '@/services/store';
 
 export const Feed = (): React.JSX.Element => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
   const orders = useSelector(selectFeedOrders);
   const isLoading = useSelector(selectFeedLoading);
 
@@ -20,7 +19,7 @@ export const Feed = (): React.JSX.Element => {
   };
 
   useEffect(() => {
-    handleGetFeeds();
+    void dispatch(getFeeds());
   }, [dispatch]);
 
   if (isLoading) {

@@ -5,7 +5,7 @@ import orderSlice from './slices/order-slice';
 import userReducer from './slices/user-slice';
 import feedSlice from './slices/feed-slice';
 
-// настоящий корневой редьюсер
+
 export const rootReducer = combineSlices({
   feed: feedSlice,
   ingredients: ingredientsSlice,

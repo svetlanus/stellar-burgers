@@ -14,7 +14,6 @@ import type { TIngredient } from '@utils-types';
 export const OrderInfo = (): React.JSX.Element => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  /**переменные orderData и ingredients из стора */
   const orderData = useSelector(selectSelectedOrder);
   const isLoading = useSelector(selectOrderByNumberLoading);
   const ingredients: TIngredient[] = useSelector(selectIngredients);
@@ -24,7 +23,7 @@ export const OrderInfo = (): React.JSX.Element => {
       void dispatch(fetchOrderByNumber(Number(id)));
     }
   }, [dispatch, id]);
-  /* Готовим данные для отображения */
+
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -45,7 +44,6 @@ export const OrderInfo = (): React.JSX.Element => {
         } else {
           acc[item].count++;
         }
-
         return acc;
       },
       {}

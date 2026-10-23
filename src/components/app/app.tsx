@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
+import { type Location } from 'react-router-dom';
 import { Preloader } from '@ui';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-
+import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom';
 import {
   AppHeader,
   Modal,
   OrderInfo,
   IngredientDetails,
   ProtectedRoute,
-} from '@components'; //*<ProtectedRoute> Modal, OrderInfo, IngredientDetails,
+} from '@components';
 import {
   ConstructorPage,
   Feed,
@@ -29,7 +29,6 @@ import {
 import { getUser } from '@/services/slices/user-slice';
 import { useDispatch, useSelector } from '@/services/store';
 import type { AppContentProps } from './type';
-
 
 import '../../index.css';
 import styles from './app.module.css';
@@ -73,8 +72,7 @@ const AppContent = ({
   if (error) {
     return (
       <p className={`${styles.message} text text_type_main-medium`}>
-        Не удалось загрузить ингредиенты
-        {error.message ? `: ${error.message}` : '.'}
+        Не удалось загрузить ингредиенты: {error}
       </p>
     );
   }
@@ -88,11 +86,33 @@ const AppContent = ({
   return <RouteComponent />;
 };
 
+const OrderModal = (): React.JSX.Element => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  const handleModalClose = (): void => {
+    void navigate(-1);
+  };
+
+  const orderNumber = id ? String(Number(id)).padStart(6, '0') : '';
+
+  return (
+    <Modal title={`# ${orderNumber}`} onClose={handleModalClose}>
+      <OrderInfo />
+    </Modal>
+  );
+};
+
 const RouteComponent = (): React.JSX.Element => {
-   const navigate = useNavigate();
-   const location = useLocation();
-   const locationState = location.state as { background?: Location };
-   const background = locationState?.background;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const locationState = location.state as { background?: Location };
+  const background = locationState?.background;
+
+  const handleModalClose = (): void => {
+    void navigate(-1);
+  };
+
   return (
     <>
       <Routes location={background ?? location}>
@@ -147,8 +167,28 @@ const RouteComponent = (): React.JSX.Element => {
           }
         />
         <Route path="*" element={<NotFound404 />} />
-        <Route path="/feed/:id" element={<OrderInfo />} />
-        <Route path="/ingredients/:id" element={<IngredientDetails />} />
+        <Route
+          path="/feed/:id"
+          element={
+            <section className={styles.detailPageWrap}>
+              <h2 className={`text text_type_main-large ${styles.detailHeader}`}>
+                # {String(Number(useParams().id)).padStart(6, '0')}
+              </h2>
+              <OrderInfo />
+            </section>
+          }
+        />
+        <Route
+          path="/ingredients/:id"
+          element={
+            <section className={styles.detailPageWrap}>
+              <h2 className={`text text_type_main-large ${styles.detailHeader}`}>
+                Детали ингредиента
+              </h2>
+              <IngredientDetails />
+            </section>
+          }
+        />
         <Route
           path="/profile/orders/:id"
           element={
@@ -161,46 +201,18 @@ const RouteComponent = (): React.JSX.Element => {
 
       {background && (
         <Routes>
-          <Route
-            path="/feed/:id"
-            element={
-              <Modal
-                title="Детали заказа"
-                onClose={() => {
-                  void navigate(-1);
-                }}
-              >
-                <OrderInfo />
-              </Modal>
-            }
-          />
+          <Route path="/feed/:id" element={<OrderModal />} />
           <Route
             path="/ingredients/:id"
             element={
-              <Modal
-                title={'Детали ингредиента'}
-                onClose={() => {
-                  void navigate(-1);
-                }}
-              >
+              <Modal title={'Детали ингредиента'} onClose={handleModalClose}>
                 <IngredientDetails />
               </Modal>
             }
           />
           <Route
             path="/profile/orders/:id"
-            element={
-              <ProtectedRoute>
-                <Modal
-                  title="Детали заказа"
-                  onClose={() => {
-                    void navigate(-1);
-                  }}
-                >
-                  <OrderInfo />
-                </Modal>
-              </ProtectedRoute>
-            }
+            element={<ProtectedRoute>{<OrderModal />}</ProtectedRoute>}
           />
         </Routes>
       )}

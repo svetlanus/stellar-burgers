@@ -2,14 +2,12 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getIngredientsApi } from '@utils/burger-api';
 import type { TIngredient } from '@utils-types';
 
-export const fetchIngredients = createAsyncThunk('ingredients/fetchAll', async () => {
-  return await getIngredientsApi();
-});
+export const fetchIngredients = createAsyncThunk('ingredients/fetchAll', getIngredientsApi);
 
 type IngredientsState = {
   ingredients: TIngredient[];
   isIngredientsLoading: boolean;
-  ingredientsError: Error | null;
+  ingredientsError: string | null;
 };
 
 const initialState: IngredientsState = {
@@ -34,17 +32,18 @@ const ingredientsSlice = createSlice({
       })
       .addCase(fetchIngredients.rejected, (state, action) => {
         state.isIngredientsLoading = false;
-        state.ingredientsError = new Error(action.error.message ?? 'Ошибка');
+        state.ingredientsError = action.error.message ?? 'Ошибка';
       });
   },
   selectors: {
     selectIngredients: (state) => state.ingredients,
     selectIsLoading: (state) => state.isIngredientsLoading,
-    selectError: (state) => state.ingredientsError,
+    selectError: (state):string | null  => state.ingredientsError,
+    selectIngredientById: (state, id?: string) => state.ingredients.find((item) => item._id === id),
   },
 });
 
-export const { selectIngredients, selectIsLoading, selectError } =
+export const { selectIngredients, selectIsLoading, selectError, selectIngredientById } =
   ingredientsSlice.selectors;
 
 export default ingredientsSlice.reducer;

@@ -9,7 +9,7 @@ export const ProfileMenu = (): React.JSX.Element => {
   const dispatch = useDispatch();
 
   const handleLogout = (): void => {
-    //Разлогинить пользователя
+
      dispatch(logoutUser())
       .unwrap()
       .then(() => {

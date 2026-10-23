@@ -10,17 +10,14 @@ export const createOrder = createAsyncThunk(
   }
 );
 
-export const getOrders = createAsyncThunk(
-  'order/getOrders',
-  async () => await getOrdersApi()
-);
+export const getOrders = createAsyncThunk('order/getOrders', getOrdersApi);
 
 type OrderState = {
   order: TOrder | null;
   orders: TOrder[];
   isOrderRequest: boolean;
   isOrdersLoading: boolean;
-  error: Error | null;
+  error: string | null;
   orderSuccess: boolean;
 };
 
@@ -57,7 +54,7 @@ const orderSlice = createSlice({
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.isOrderRequest = false;
-        state.error = new Error(action.error.message ?? 'Ошибка');
+        state.error = action.error.message ?? 'Ошибка';
         state.orderSuccess = false;
       })
 
@@ -71,7 +68,7 @@ const orderSlice = createSlice({
       })
       .addCase(getOrders.rejected, (state, action) => {
         state.isOrdersLoading = false;
-        state.error = new Error(action.error.message ?? 'Ошибка загрузки заказов');
+        state.error = action.error.message ?? 'Ошибка загрузки заказов';
       });
   },
 });
@@ -81,7 +78,7 @@ export const selectOrder = (state: { order: OrderState }): TOrder | null =>
   state.order.order;
 export const selectOrderRequest = (state: { order: OrderState }): boolean =>
   state.order.isOrderRequest;
-export const selectOrderError = (state: { order: OrderState }): Error | null =>
+export const selectOrderError = (state: { order: OrderState }): string | null =>
   state.order.error;
 export const selectOrderSuccess = (state: { order: OrderState }): boolean =>
   state.order.orderSuccess;
