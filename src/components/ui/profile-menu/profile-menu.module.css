@@ -3,6 +3,11 @@
   width: 100%;
   color: #8585ad;
   text-decoration: none;
+  transition: var(--common-transition);
+}
+
+.link:hover {
+  color: var(--text-primary-color);
 }
 
 .link_active {
@@ -15,8 +20,4 @@
   text-decoration: none;
   background-color: unset;
   border: none;
-}
-
-.button:hover {
-  cursor: pointer;
 }
