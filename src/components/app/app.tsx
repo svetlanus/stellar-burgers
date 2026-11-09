@@ -102,6 +102,19 @@ const OrderModal = (): React.JSX.Element => {
     </Modal>
   );
 };
+const OrderPage = (): React.JSX.Element => {
+  const { id } = useParams<{ id: string }>();
+  const orderNumber = id ? String(Number(id)).padStart(6, '0') : '';
+
+  return (
+    <section className={styles.detailPageWrap}>
+      <h2 className={`text text_type_main-large ${styles.detailHeader}`}>
+        # {orderNumber}
+      </h2>
+      <OrderInfo />
+    </section>
+  );
+};
 
 const RouteComponent = (): React.JSX.Element => {
   const navigate = useNavigate();
@@ -167,17 +180,7 @@ const RouteComponent = (): React.JSX.Element => {
           }
         />
         <Route path="*" element={<NotFound404 />} />
-        <Route
-          path="/feed/:id"
-          element={
-            <section className={styles.detailPageWrap}>
-              <h2 className={`text text_type_main-large ${styles.detailHeader}`}>
-                # {String(Number(useParams().id)).padStart(6, '0')}
-              </h2>
-              <OrderInfo />
-            </section>
-          }
-        />
+        <Route path="/feed/:id" element={<OrderPage />} />
         <Route
           path="/ingredients/:id"
           element={
@@ -193,7 +196,7 @@ const RouteComponent = (): React.JSX.Element => {
           path="/profile/orders/:id"
           element={
             <ProtectedRoute>
-              <OrderInfo />
+              <OrderPage />
             </ProtectedRoute>
           }
         />
