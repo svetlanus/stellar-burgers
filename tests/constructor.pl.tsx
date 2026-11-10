@@ -8,7 +8,7 @@ test.describe('add ingredients to constructor works correctly', function () {
       url: '**/api/ingredients',
       update: false,
     });
-    await page.goto('http://localhost:4000');
+    await page.goto('/');
 
     const bunCard = page.locator('li').filter({ hasText: 'Флюоресцентная булка R2-D3' });
     await bunCard.getByRole('button').click();
@@ -17,6 +17,15 @@ test.describe('add ingredients to constructor works correctly', function () {
     await expect(emptyBunText).toBeHidden(); //надпись исчезла при выборе булки
 
     await expect(bunCard.locator('.counter')).toHaveText('2');
+    const constructor = page.getByTestId('burger-constructor');
+
+    await expect(
+      constructor.getByText('Флюоресцентная булка R2-D3 (верх)')
+    ).toBeVisible();
+
+    await expect(
+      constructor.getByText('Флюоресцентная булка R2-D3 (низ)')
+    ).toBeVisible();
   });
 
   test('Добавление ингредиента из списка ингредиентов в конструктор (начинка)', async ({
@@ -26,17 +35,23 @@ test.describe('add ingredients to constructor works correctly', function () {
       url: '**/api/ingredients',
       update: false,
     });
-    await page.goto('http://localhost:4000');
+    await page.goto('/');
+
+    const emptyFillingText = page.getByText('Выберите начинку');
+    await expect(emptyFillingText).toBeVisible(); //надпись видна
 
     const fillingCard = page
       .locator('li')
       .filter({ hasText: 'Говяжий метеорит (отбивная)' });
+
     await fillingCard.getByRole('button').click();
 
-    const emptyFillingText = page.getByText('Выберите начинку').first();
     await expect(emptyFillingText).toBeHidden(); //надпись исчезла при выборе начинки
 
     await expect(fillingCard.locator('.counter')).toHaveText('1');
+    const constructor = page.getByTestId('burger-constructor');
+
+    await expect(constructor.getByText('Говяжий метеорит (отбивная)')).toBeVisible();
   });
 
   test('Работа модального окна ингридиента', async ({ page }) => {
@@ -44,7 +59,7 @@ test.describe('add ingredients to constructor works correctly', function () {
       url: '**/api/ingredients',
       update: false,
     });
-    await page.goto('http://localhost:4000');
+    await page.goto('/');
 
     await page.getByText('Флюоресцентная булка R2-D3').click();
 
@@ -78,7 +93,7 @@ test.describe('add ingredients to constructor works correctly', function () {
     await page.addInitScript(() => {
       document.cookie = 'accessToken=mock-token; path=/';
     });
-    await page.goto('http://localhost:4000');
+    await page.goto('/');
 
     await page
       .locator('li')
@@ -90,17 +105,27 @@ test.describe('add ingredients to constructor works correctly', function () {
       .filter({ hasText: 'Биокотлета' })
       .getByRole('button')
       .click();
+    const constructor = page.getByTestId('burger-constructor');
+    await expect(constructor.getByText('Краторная булка N-200i (верх)')).toBeVisible();
+
+    await expect(constructor.getByText('Краторная булка N-200i (низ)')).toBeVisible();
+
+    await expect(constructor.getByText('Биокотлета')).toBeVisible();
 
     await page.getByRole('button', { name: 'Оформить заказ' }).click();
 
-    const modal = page.getByText('Ваш заказ начали готовить');
-    await expect(modal).toBeVisible();
+    const modal = page.locator('#modals');
 
-    await expect(page.getByText('12345')).toBeVisible();
+    await expect(modal.getByText('Ваш заказ начали готовить')).toBeVisible();
+    await expect(modal.getByText('12345', { exact: true })).toBeVisible();
 
     await page.getByLabel('Закрыть').click();
-    await expect(modal).toBeHidden();
+    await expect(modal.getByText('Ваш заказ начали готовить')).toBeHidden();
+    await expect(constructor.getByText('Краторная булка N-200i (верх)')).toBeHidden();
+    await expect(constructor.getByText('Краторная булка N-200i (низ)')).toBeHidden();
+    await expect(constructor.getByText('Биокотлета')).toBeHidden();
 
     await expect(page.getByText('Выберите булки').first()).toBeVisible();
+    await expect(constructor.getByText('Выберите начинку')).toBeVisible();
   });
 });

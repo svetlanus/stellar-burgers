@@ -2,6 +2,7 @@ import constructorSlice, {
   addIngredient,
   removeIngredient,
   removeIngredientAll,
+  moveIngredient,
 } from '../burger-constructor-slice';
 
 describe('Тестирование слайса конструктора constructorSlice', () => {
@@ -69,6 +70,135 @@ describe('Тестирование слайса конструктора constru
     expect(state.ingredients).toHaveLength(0);
   });
 
+  test.each([
+    {
+      direction: 'up' as const,
+      expectedOrder: [
+        'Соус с шипами Антарианского плоскоходца',
+        'Мясо бессмертных моллюсков Protostomia',
+        'Биокотлета из марсианской Магнолии',
+      ],
+    },
+    {
+      direction: 'down' as const,
+      expectedOrder: [
+        'Мясо бессмертных моллюсков Protostomia',
+        'Биокотлета из марсианской Магнолии',
+        'Соус с шипами Антарианского плоскоходца',
+      ],
+    },
+  ])('Перемещение ингредиента $direction', ({ direction, expectedOrder }) => {
+    const initialState = {
+      bun: null,
+      ingredients: [
+        {
+          id: '1',
+          _id: '6acd6b8163765e82e70bd9ee',
+          name: 'Мясо бессмертных моллюсков Protostomia',
+          type: 'main',
+          proteins: 433,
+          fat: 244,
+          carbohydrates: 33,
+          calories: 420,
+          price: 1337,
+          image: 'https://norma.ffapi.ru/images/meat-02.png',
+          image_mobile: 'https://norma.ffapi.ru/images/meat-02-mobile.png',
+          image_large: 'https://norma.ffapi.ru/images/meat-02-large.png',
+          __v: 0,
+        },
+        {
+          id: '2',
+          _id: '6acd6b8163765e40420bd9f4',
+          name: 'Соус с шипами Антарианского плоскоходца',
+          type: 'sauce',
+          proteins: 101,
+          fat: 99,
+          carbohydrates: 100,
+          calories: 100,
+          price: 88,
+          image: 'https://norma.ffapi.ru/images/sauce-01.png',
+          image_mobile: 'https://norma.ffapi.ru/images/sauce-01-mobile.png',
+          image_large: 'https://norma.ffapi.ru/images/sauce-01-large.png',
+          __v: 0,
+        },
+        {
+          id: '3',
+          _id: '6acd6b8163765e96530bd9f0',
+          name: 'Биокотлета из марсианской Магнолии',
+          type: 'main',
+          proteins: 420,
+          fat: 142,
+          carbohydrates: 242,
+          calories: 4242,
+          price: 424,
+          image: 'https://norma.ffapi.ru/images/meat-01.png',
+          image_mobile: 'https://norma.ffapi.ru/images/meat-01-mobile.png',
+          image_large: 'https://norma.ffapi.ru/images/meat-01-large.png',
+          __v: 0,
+        },
+      ],
+    };
+
+    const action = moveIngredient({
+      id: '2',
+      direction,
+    });
+
+    const state = constructorSlice(initialState, action);
+
+    expect(state.ingredients.map((item) => item.name)).toEqual(expectedOrder);
+  });
+
+  test('Нельзя переместить последний ингредиент вниз', () => {
+    const initialState = {
+      bun: null,
+      ingredients: [
+        {
+          id: '1',
+          _id: '6acd6b8163765e82e70bd9ee',
+          name: 'Мясо бессмертных моллюсков Protostomia',
+          type: 'main',
+          proteins: 433,
+          fat: 244,
+          carbohydrates: 33,
+          calories: 420,
+          price: 1337,
+          image: 'https://norma.ffapi.ru/images/meat-02.png',
+          image_mobile: 'https://norma.ffapi.ru/images/meat-02-mobile.png',
+          image_large: 'https://norma.ffapi.ru/images/meat-02-large.png',
+          __v: 0,
+        },
+        {
+          id: '2',
+          _id: '6acd6b8163765e40420bd9f4',
+          name: 'Соус с шипами Антарианского плоскоходца',
+          type: 'sauce',
+          proteins: 101,
+          fat: 99,
+          carbohydrates: 100,
+          calories: 100,
+          price: 88,
+          image: 'https://norma.ffapi.ru/images/sauce-01.png',
+          image_mobile: 'https://norma.ffapi.ru/images/sauce-01-mobile.png',
+          image_large: 'https://norma.ffapi.ru/images/sauce-01-large.png',
+          __v: 0,
+        },
+      ],
+    };
+
+    const action = moveIngredient({
+      id: '2',
+      direction: 'down',
+    });
+
+    const state = constructorSlice(initialState, action);
+
+    expect(state.ingredients.map((item) => item.name)).toEqual([
+      'Мясо бессмертных моллюсков Protostomia',
+      'Соус с шипами Антарианского плоскоходца',
+    ]);
+  });
+
   test('Очистка конструктора от ингридиентов', () => {
     const initialState = {
       bun: {
@@ -104,18 +234,18 @@ describe('Тестирование слайса конструктора constru
         },
         {
           id: '',
-          "_id": "6acd6b8163765e40420bd9f4",
-            "name": "Соус с шипами Антарианского плоскоходца",
-            "type": "sauce",
-            "proteins": 101,
-            "fat": 99,
-            "carbohydrates": 100,
-            "calories": 100,
-            "price": 88,
-            "image": "https://norma.ffapi.ru/images/sauce-01.png",
-            "image_mobile": "https://norma.ffapi.ru/images/sauce-01-mobile.png",
-            "image_large": "https://norma.ffapi.ru/images/sauce-01-large.png",
-            "__v": 0
+          _id: '6acd6b8163765e40420bd9f4',
+          name: 'Соус с шипами Антарианского плоскоходца',
+          type: 'sauce',
+          proteins: 101,
+          fat: 99,
+          carbohydrates: 100,
+          calories: 100,
+          price: 88,
+          image: 'https://norma.ffapi.ru/images/sauce-01.png',
+          image_mobile: 'https://norma.ffapi.ru/images/sauce-01-mobile.png',
+          image_large: 'https://norma.ffapi.ru/images/sauce-01-large.png',
+          __v: 0,
         },
       ],
     };
